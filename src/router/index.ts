@@ -13,7 +13,7 @@ const routes: RouteRecordRaw[] = [
         path: '', name: 'viewVersions', component: () => import('pages/ViewPage.vue')
       },
       {
-        path: 'form', name: 'formVersions', component: () => import('pages/FormPage.vue')
+        path: 'form/:id?', name: 'formVersions', component: () => import('pages/FormPage.vue')
       }
     ]
   },

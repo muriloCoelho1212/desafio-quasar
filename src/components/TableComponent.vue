@@ -43,6 +43,7 @@
 import { QTableProps, useQuasar } from 'quasar'
 import { api } from 'src/boot/axios'
 import { onMounted, ref } from 'vue'
+import { useRouter } from 'vue-router'
 
 const columns: QTableProps['columns'] = [
   {
@@ -92,6 +93,7 @@ const columns: QTableProps['columns'] = [
 const versions = ref([])
 
 const $q = useQuasar()
+const router = useRouter()
 
 onMounted(async () => {
   await getData()
@@ -137,12 +139,12 @@ const deleteRow = async (id: number) => {
   }
 }
 
-const editRow = (id: number) => {
-  console.log(id)
+const editRow = (id: string) => {
+  router.push({ name: 'formVersions', params: { id } })
 }
 
-const viewRow = (id: number) => {
-  console.log(id)
+const viewRow = (id: string) => {
+  router.push({ name: 'formVersions', params: { id } })
 }
 
 </script>
