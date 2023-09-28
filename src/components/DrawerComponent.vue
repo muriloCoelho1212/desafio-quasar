@@ -39,7 +39,7 @@
           <q-icon name="fa-brands fa-github" />
         </q-item-section>
 
-        <q-item-section class="text-weight-bold q-py-md">Cadastrar</q-item-section>
+        <q-item-section class="text-weight-bold q-py-md">GitHub</q-item-section>
       </q-item>
     </q-list>
 

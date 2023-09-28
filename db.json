@@ -1,14 +1,24 @@
 {
   "versions": [
     {
-      "id": 1,
-      "numberVersion": 1.0,
-      "dataVersion": "12/12/1212",
+      "numberVersion": "1",
+      "dateVersion": "12/12/1212",
       "listNews": {
-        "title": "Novidade 1",
-        "description": "Essa novidade implementa um campo de cadastro no sistema",
-        "img": "base64"
-      }
+        "title": "adsafsdafsdafs",
+        "descript": "fsdafsdafsadfsdafds",
+        "img": null
+      },
+      "id": 1
+    },
+    {
+      "numberVersion": "1",
+      "dateVersion": "12/12/1212",
+      "listNews": {
+        "title": "adsadsdas",
+        "descript": "dasdasdasd",
+        "img": null
+      },
+      "id": 2
     }
   ]
 }

@@ -1,6 +1,11 @@
 export interface IVersions {
-  id: number,
-  numberVersion: number,
-  dataVersion: Date,
-  listNews: object
+  numberVersion: number | null,
+  dateVersion: string | null,
+  listNews: object | null
+}
+
+export interface IListNews {
+  title: string | null,
+  descript: string | null,
+  img: string | null
 }
