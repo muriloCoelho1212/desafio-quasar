@@ -72,7 +72,8 @@ const columns: QTableProps['columns'] = [
     required: true,
     label: 'Novidades',
     align: 'left',
-    field: 'listNews'
+    field: 'listNews',
+    format: val => val.length === 1 ? `${val.length} novidade nessa versão` : `${val.length} novidades nessa versão`
   },
   {
     name: 'actions',
@@ -81,13 +82,6 @@ const columns: QTableProps['columns'] = [
     align: 'right',
     field: 'actions'
   }
-  // {
-  //   name: 'listNews',
-  //   required: true,
-  //   label: 'Novidades',
-  //   align: 'left',
-  //   field: 'listNews'
-  // }
 ]
 
 const versions = ref([])

@@ -1,23 +1,27 @@
 {
   "versions": [
     {
-      "numberVersion": "1.0",
-      "dateVersion": "12/12/1212",
-      "listNews": {
-        "title": "adsafsdafsdafs",
-        "descript": "fsdafsdafsadfsdafds",
-        "img": null
-      },
+      "numberVersion": "1",
+      "dateVersion": "29/09/2023",
+      "listNews": [
+        {
+          "title": "teste",
+          "descript": "teste",
+          "img": "teste"
+        }
+      ],
       "id": 1
     },
     {
-      "numberVersion": "1",
-      "dateVersion": "12/12/1212",
-      "listNews": {
-        "title": "adsadsdas",
-        "descript": "dasdasdasd",
-        "img": null
-      },
+      "numberVersion": "1.0",
+      "dateVersion": "29/09/2023",
+      "listNews": [
+        {
+          "title": "teste",
+          "descript": "teste",
+          "img": "teste"
+        }
+      ],
       "id": 2
     }
   ]
