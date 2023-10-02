@@ -11,17 +11,20 @@
       <div class="row">
         <q-input
           outlined
-          type="number"
-          label="Número da versão"
-          placeholder="Ex: 1.0"
+          type="text"
+          label="Número da versão *"
+          placeholder="Ex: 1.00"
           v-model="versionValue.numberVersion"
           color="orange-12"
           lazy-rules
-          :rules="[ val => val && val.length > 0 || 'Campo obrigatório', val => val.length < 100]"
+          :rules="[ val => val && val.length < 0 || 'Campo obrigatório']"
+          mask="#.##"
+          unmasked-value
+          reverse-fill-mask
           class="q-pr-md col"
         />
 
-        <q-input class="q-pr-md col" color="orange-12" outlined type="text" placeholder="dd/mm/aaaa" v-model="date" label="Data de disponibilidade" lazy-rules :rules="[   val => val && val.length > 0 || 'Campo obrigatório']">
+        <q-input class="q-pr-md col" color="orange-12" readonly outlined type="text" placeholder="dd/mm/aaaa" v-model="date" label="Data de disponibilidade *" lazy-rules :rules="[   val => val && val.length > 0 || 'Campo obrigatório']">
           <template v-slot:prepend>
             <q-btn-dropdown flat dense dropdown-icon="fa-solid fa-calendar-days" padding=".25rem" no-icon-animation>
               <q-date
@@ -34,13 +37,13 @@
                   months: ['Janeiro', 'Fevereiro', 'Março', 'Abril', 'Maio', 'Junho', 'Julho', 'Agosto', 'Setembro', 'Outubro', 'Novembro', 'Dezembro'],
                   monthsShort: ['Jan', 'Fev', 'Mar', 'Abr', 'Mai', 'Jun', 'Jul', 'Ago', 'Set', 'Out', 'Nov', 'Dez']
                 }"
+                :navigation-max-year-month="new Date().getFullYear().toString()"
+                :navigation-min-year-month="new Date().getFullYear().toString()"
               />
             </q-btn-dropdown>
           </template>
         </q-input>
       </div>
-
-      <form-news />
 
       <div class="q-mt-md">
         <q-btn label="Enviar" type="submit" color="deep-orange-5" v-show="!disable"/>
@@ -56,7 +59,6 @@ import { api } from 'src/boot/axios'
 import { IListNews, IVersions } from 'src/interfaces'
 import { onMounted, ref } from 'vue'
 import { useRoute, useRouter } from 'vue-router'
-import FormNews from './FormNews.vue'
 
 const router = useRouter()
 

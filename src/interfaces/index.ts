@@ -5,7 +5,7 @@ export interface IVersions {
 }
 
 export interface IListNews {
-  title: string | null,
+  title: string,
   descript: string | null,
-  img: string | null,
+  img: string | ArrayBuffer | null,
 }
