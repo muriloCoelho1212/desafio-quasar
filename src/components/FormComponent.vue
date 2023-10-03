@@ -8,7 +8,7 @@
     </div>
     <q-separator spaced />
     <div class="q-pa-lg q-gutter-sm">
-      <div class="row">
+      <div class="row items-center">
         <q-input
           outlined
           type="text"
@@ -17,18 +17,18 @@
           v-model="versionValue.numberVersion"
           color="orange-12"
           lazy-rules
-          :rules="[ val => val && val.length < 0 || 'Campo obrigatório']"
+          :rules="[ val => val && val.length > 0 || 'Campo obrigatório', val => val.length < 4 || 'Insira no máximo 3 caracteres']"
           mask="#.##"
           unmasked-value
           reverse-fill-mask
           class="q-pr-md col"
         />
 
-        <q-input class="q-pr-md col" color="orange-12" readonly outlined type="text" placeholder="dd/mm/aaaa" v-model="date" label="Data de disponibilidade *" lazy-rules :rules="[   val => val && val.length > 0 || 'Campo obrigatório']">
+        <q-input class="q-pr-md col" clearable readonly clear-icon="fa-solid fa-xmark" mask="##/##/####" color="orange-12" outlined type="text" placeholder="dd/mm/aaaa" v-model="versionValue.dateVersion" label="Data de disponibilidade *" :rules="[val => val && val.length > 0 || 'Campo obrigatório']">
           <template v-slot:prepend>
-            <q-btn-dropdown flat dense dropdown-icon="fa-solid fa-calendar-days" padding=".25rem" no-icon-animation>
+            <q-btn-dropdown flat dense dropdown-icon="fa-solid fa-calendar-days" padding="none" no-icon-animation>
               <q-date
-                v-model="date"
+                v-model="versionValue.dateVersion"
                 color="deep-orange-12"
                 mask="DD/MM/YYYY"
                 :locale="{
@@ -38,11 +38,15 @@
                   monthsShort: ['Jan', 'Fev', 'Mar', 'Abr', 'Mai', 'Jun', 'Jul', 'Ago', 'Set', 'Out', 'Nov', 'Dez']
                 }"
                 :navigation-max-year-month="new Date().getFullYear().toString()"
-                :navigation-min-year-month="new Date().getFullYear().toString()"
+                navigation-min-year-month="2000"
               />
             </q-btn-dropdown>
           </template>
         </q-input>
+      </div>
+
+      <div>
+        <form-news-component :listNewsValue="listNewsValue" />
       </div>
 
       <div class="q-mt-md">
@@ -59,6 +63,7 @@ import { api } from 'src/boot/axios'
 import { IListNews, IVersions } from 'src/interfaces'
 import { onMounted, ref } from 'vue'
 import { useRoute, useRouter } from 'vue-router'
+import FormNewsComponent from './FormNewsComponent.vue'
 
 const router = useRouter()
 
@@ -66,7 +71,6 @@ const $q = useQuasar()
 const route = useRoute()
 
 const id = route.params.id
-const date = ref(new Date().toLocaleDateString())
 const disable = ref(false)
 
 onMounted(async () => {
@@ -77,17 +81,11 @@ onMounted(async () => {
   }
 })
 
-const listNewsValue = ref<IListNews[]>([
-  {
-    title: 'teste',
-    descript: 'teste',
-    img: 'teste'
-  }
-])
+const listNewsValue = ref<IListNews[]>([])
 
 const versionValue = ref<IVersions>({
-  numberVersion: null,
-  dateVersion: date.value.toString(),
+  numberVersion: '',
+  dateVersion: '',
   listNews: listNewsValue.value
 })
 

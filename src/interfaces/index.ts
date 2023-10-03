@@ -1,11 +1,11 @@
 export interface IVersions {
-  numberVersion: number | null,
-  dateVersion: string | null,
-  listNews: Array<object> | null
+  numberVersion: string,
+  dateVersion: string,
+  listNews: Array<object>
 }
 
 export interface IListNews {
   title: string,
-  descript: string | null,
+  descript: string,
   img: string | ArrayBuffer | null,
 }

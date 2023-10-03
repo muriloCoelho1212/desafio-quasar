@@ -4,11 +4,6 @@
     :columns="columns"
     row-key="id"
   >
-    <template v-slot:body-cell-listNews="props">
-      <q-td :props="props">
-        <q-btn flat outline rounded label="Adicionar novidade" icon="fa-solid fa-plus" color="deep-orange-12"/>
-      </q-td>
-    </template>
     <template v-slot:body-cell-actions="props">
       <q-td :props="props">
         <q-btn-dropdown flat color="grey-6" dropdown-icon="fa-solid fa-ellipsis-vertical" no-icon-animation padding=".50rem">
@@ -52,13 +47,6 @@ import { useRouter } from 'vue-router'
 
 const columns: QTableProps['columns'] = [
   {
-    name: 'id',
-    required: true,
-    label: 'Id',
-    align: 'left',
-    field: 'id'
-  },
-  {
     name: 'numberVersion',
     required: true,
     label: 'Número da versão',
@@ -77,8 +65,8 @@ const columns: QTableProps['columns'] = [
     required: true,
     label: 'Novidades',
     align: 'center',
-    field: 'listNews'
-    // format: val => val.length === 1 ? `${val.length} novidade nessa versão` : `${val.length} novidades nessa versão`
+    field: 'listNews',
+    format: val => val.length === 1 ? `${val.length} novidade nessa versão` : `${val.length} novidades nessa versão`
   },
   {
     name: 'actions',
@@ -145,7 +133,6 @@ const editRow = (id: string) => {
 const viewRow = (id: string) => {
   router.push({ name: 'formVersions', params: { id } })
 }
-
 </script>
 
 <style scoped>
