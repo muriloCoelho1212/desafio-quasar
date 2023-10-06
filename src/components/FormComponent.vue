@@ -1,6 +1,6 @@
 <template>
   <q-form
-    @submit="onSubmit"
+    @submit.prevent="onSubmit"
     class="bg-grey-1 rounded-borders"
   >
     <div class="q-pt-md q-pb-sm">
@@ -17,10 +17,7 @@
           v-model="versionValue.numberVersion"
           color="orange-12"
           lazy-rules
-          :rules="[ val => val && val.length > 0 || 'Campo obrigatório', val => val.length < 4 || 'Insira no máximo 3 caracteres']"
-          mask="#.##"
-          unmasked-value
-          reverse-fill-mask
+          :rules="[ val => val && val.length > 0 || 'Campo obrigatório', val => val.length <= 4 || 'Insira no máximo 4 caracteres']"
           class="q-pr-md col"
         />
 
@@ -46,12 +43,11 @@
       </div>
 
       <div>
-        <form-news-component :listNewsValue="listNewsValue" />
+        <form-news-component :version-value="versionValue" :id="id" />
       </div>
 
       <div class="q-mt-md">
-        <q-btn label="Enviar" type="submit" color="deep-orange-5" v-show="!disable"/>
-        <q-btn label="Editar" color="deep-orange-5" @click="editVersion()" v-show="disable"/>
+        <q-btn label="Salvar" type="submit" color="deep-orange-5" />
       </div>
     </div>
   </q-form>
@@ -59,11 +55,13 @@
 
 <script setup lang="ts">
 import { useQuasar } from 'quasar'
-import { api } from 'src/boot/axios'
 import { IListNews, IVersions } from 'src/interfaces'
-import { onMounted, ref } from 'vue'
+import { computed, onMounted, ref } from 'vue'
 import { useRoute, useRouter } from 'vue-router'
 import FormNewsComponent from './FormNewsComponent.vue'
+import { useStore } from 'vuex'
+
+const store = useStore()
 
 const router = useRouter()
 
@@ -73,25 +71,30 @@ const route = useRoute()
 const id = route.params.id
 const disable = ref(false)
 
-onMounted(async () => {
-  if (id) {
-    disable.value = true
-    const { data } = await api.get(`versions/${id}`)
-    versionValue.value = data
-  }
-})
-
 const listNewsValue = ref<IListNews[]>([])
 
 const versionValue = ref<IVersions>({
+  id: 0,
   numberVersion: '',
   dateVersion: '',
   listNews: listNewsValue.value
 })
 
+const version = computed(() => store.state.versions)
+
+onMounted(async () => {
+  if (id) {
+    disable.value = true
+    await store.dispatch('getVersion', id)
+    versionValue.value = version.value
+    await store.dispatch('getVersions')
+  }
+})
+
 const editVersion = async () => {
   try {
-    await api.put(`versions/${id}`, versionValue.value)
+    await store.dispatch('putVersion', versionValue.value)
+    await store.dispatch('getVersions')
     $q.notify({
       message: 'Editado com sucesso',
       icon: 'fa-solid fa-thumbs-up',
@@ -108,18 +111,27 @@ const editVersion = async () => {
 }
 
 const onSubmit = async () => {
-  await api.post('versions', versionValue.value)
-  $q.notify({
-    message: 'Versão cadastrada com sucesso',
-    icon: 'fa-solid fa-thumbs-up',
-    color: 'teal-13'
-  })
-  router.push({ name: 'viewVersions' })
+  try {
+    if (id) {
+      editVersion()
+      return
+    }
+    await store.dispatch('postVersion', versionValue.value)
+    $q.notify({
+      message: 'Versão cadastrada com sucesso',
+      icon: 'fa-solid fa-thumbs-up',
+      color: 'teal-13'
+    })
+    router.push({ name: 'viewVersions' })
+  } catch {
+    $q.notify({
+      message: 'Não foi possível cadastrar a versão',
+      icon: 'fa-solid fa-thumbs-down',
+      color: 'red-9'
+    })
+  }
 }
 </script>
 
 <style scoped>
-.formNews {
-  width: 50%;
-}
 </style>

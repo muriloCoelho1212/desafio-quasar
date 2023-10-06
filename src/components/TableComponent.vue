@@ -41,9 +41,10 @@
 
 <script setup lang="ts">
 import { QTableProps, useQuasar } from 'quasar'
-import { api } from 'src/boot/axios'
-import { onMounted, ref } from 'vue'
+import { IVersions } from 'src/interfaces'
+import { computed, onMounted } from 'vue'
 import { useRouter } from 'vue-router'
+import { useStore } from 'vuex'
 
 const columns: QTableProps['columns'] = [
   {
@@ -63,10 +64,10 @@ const columns: QTableProps['columns'] = [
   {
     name: 'listNews',
     required: true,
-    label: 'Novidades',
-    align: 'center',
+    label: 'Data da versão',
+    align: 'left',
     field: 'listNews',
-    format: val => val.length === 1 ? `${val.length} novidade nessa versão` : `${val.length} novidades nessa versão`
+    format: val => val.length > 1 ? `${val.length} novidades cadastradas` : `${val.length} novidade cadastrada`
   },
   {
     name: 'actions',
@@ -77,7 +78,9 @@ const columns: QTableProps['columns'] = [
   }
 ]
 
-const versions = ref([])
+const store = useStore()
+
+const versions = computed<IVersions[]>(() => store.state.versions)
 
 const $q = useQuasar()
 const router = useRouter()
@@ -88,8 +91,7 @@ onMounted(async () => {
 
 const getData = async () => {
   try {
-    const { data } = await api.get('versions')
-    versions.value = data
+    await store.dispatch('getVersions')
   } catch {
     $q.notify({
       message: 'Erro ao carregar a tabela',
@@ -109,13 +111,13 @@ const deleteRow = async (id: number) => {
       color: 'orange-12',
       focus: 'none'
     }).onOk(async () => {
-      await api.delete(`versions/${id}`)
+      await store.dispatch('delVersion', id)
       $q.notify({
         message: 'Excluído com sucesso',
         icon: 'fa-solid fa-thumbs-up',
         color: 'teal-13'
       })
-      getData()
+      await getData()
     })
   } catch {
     $q.notify({
@@ -130,13 +132,10 @@ const editRow = (id: string) => {
   router.push({ name: 'formVersions', params: { id } })
 }
 
-const viewRow = (id: string) => {
+const viewRow = async (id: string) => {
   router.push({ name: 'formVersions', params: { id } })
 }
 </script>
 
 <style scoped>
-.spacing{
-  padding: .75em;
-}
 </style>
