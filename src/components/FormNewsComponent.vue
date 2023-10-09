@@ -1,69 +1,88 @@
 <template>
   <q-card flat bordered class="bg-grey-1">
-    <div v-if="id">
-
-      <q-card-section>
-        <span class="text-h6 text-weight-bold text-grey-7">Cadastre sua novidade</span>
-      </q-card-section>
-
-      <q-separator />
-
-      <q-card-section class="q-pa-lg q-gutter-sm">
-        <q-form class="row">
-          <q-input
-            outlined
-            color="orange-12"
-            type="text"
-            v-model="newsValue.title"
-            label="Título"
-            lazy-rules
-            :rules="[
-              val => val !== null && val !== '' || 'Campo obrigatório',
-            ]"
-            class="q-pr-md q-mb-sm col-xs-12"
-          />
-
-          <q-input
-            v-model="newsValue.descript"
-            outlined
-            autogrow
-            type="textarea"
-            color="orange-12"
-            label="Descrição"
-            lazy-rules
-            :rules="[
-              val => val !== null && val !== '' || 'Campo obrigatório', val => val.length < 800 || 'O limite de caracteres foi atingido'
-            ]"
-            class="q-pr-md col"
-          />
-
-          <q-file v-model="img" @update:model-value="convertImage()" outlined label="Imagem" color="orange-12" clearable class="col-xs-2" clear-icon="fa-solid fa-xmark"/>
-
-          <div>
-            <q-btn class="q-pa-md q-mx-md" outline dense icon="fa-solid fa-check-to-slot" color="deep-orange-12" @click="saveNews" >
-              <q-tooltip class="text-caption">Adicionar novidade</q-tooltip>
-            </q-btn>
-          </div>
-        </q-form>
-      </q-card-section>
-    </div>
+    <q-card-section>
+      <span class="text-h6 text-weight-bold text-grey-7">Cadastre sua novidade</span>
+    </q-card-section>
 
     <q-separator />
 
-    <q-card-section class="no-padding">
-      <div class="q-ma-md">
-        <span class="text-h6 text-weight-bold text-grey-7">Novidades cadastradas</span>
-      </div>
-      <q-separator />
-      <div class="q-ma-md">
-        <q-table :columns="columns" :rows="listNews" row-key="title" />
-      </div>
+    <q-card-section class="q-gutter-sm">
+      <q-form class="row">
+        <q-input
+          outlined
+          color="orange-12"
+          type="text"
+          v-model="newsValue.title"
+          label="Título"
+          lazy-rules
+          :rules="[
+            val => val !== null && val !== '' || 'Campo obrigatório',
+          ]"
+          class="q-pr-md q-mb-sm col-xs-12"
+        />
+
+        <q-input
+          v-model="newsValue.descript"
+          outlined
+          autogrow
+          type="textarea"
+          color="orange-12"
+          label="Descrição"
+          lazy-rules
+          :rules="[
+            val => val !== null && val !== '' || 'Campo obrigatório', val => val.length < 800 || 'O limite de caracteres foi atingido'
+          ]"
+          class="q-pr-md col"
+        />
+
+        <q-file v-model="img" @update:model-value="convertImage()" outlined label="Imagem" color="orange-12" clearable class="col-xs-2" clear-icon="fa-solid fa-xmark">
+          <template v-slot:prepend>
+            <q-icon name="fa-solid fa-upload" />
+          </template>
+        </q-file>
+
+        <div>
+          <q-btn class="q-pa-md q-mx-md" outline dense icon="fa-solid fa-check-to-slot" color="deep-orange-12" @click="saveNews()">
+            <q-tooltip class="text-caption">Adicionar novidade</q-tooltip>
+          </q-btn>
+        </div>
+      </q-form>
+    </q-card-section>
+
+    <q-card-section>
+      <q-table :columns="columns" :rows="version.listNews" row-key="title" >
+        <template v-slot:body-cell-title="props">
+          <q-td>
+            <q-input v-model="props.row.title" type="text" outlined color="orange-12" label="Título"/>
+          </q-td>
+        </template>
+        <template v-slot:body-cell-descript="props">
+          <q-td>
+            <q-input v-model="props.row.descript" type="text" outlined color="orange-12" label="Descrição" />
+          </q-td>
+        </template>
+        <template v-slot:body-cell-img="props">
+          <q-td>
+            <q-img :placeholder-src="props.row.img" />
+            <q-file v-model="props.row.img" @update:model-value="convertImage(props.row.img)" outlined label="Imagem" color="orange-12" clearable class="col-xs-2" clear-icon="fa-solid fa-xmark"  >
+              <template v-slot:prepend>
+                <q-icon name="fa-solid fa-upload" />
+              </template>
+            </q-file>
+          </q-td>
+        </template>
+        <template v-slot:body-cell-actions>
+          <q-td class="col">
+            <q-btn flat icon="fa-solid fa-trash" color="red-6" padding=".50rem" />
+          </q-td>
+        </template>
+      </q-table>
     </q-card-section>
   </q-card>
 </template>
 
 <script setup lang="ts">
-import { QTableProps } from 'quasar'
+import { QTableProps, useQuasar } from 'quasar'
 import { IListNews, IVersions } from 'src/interfaces'
 import { computed, ref } from 'vue'
 
@@ -71,7 +90,7 @@ const columns: QTableProps['columns'] = [
   {
     name: 'title',
     required: true,
-    align: 'center',
+    align: 'left',
     label: 'Título',
     field: 'title'
   },
@@ -85,7 +104,7 @@ const columns: QTableProps['columns'] = [
   {
     name: 'img',
     required: true,
-    align: 'center',
+    align: 'left',
     label: 'Imagem',
     field: 'img'
   },
@@ -98,37 +117,47 @@ const columns: QTableProps['columns'] = [
   }
 ]
 
-const props = defineProps<{ versionValue: IVersions, id: string | string[] }>()
+const props = defineProps<{ versionValue: IVersions, id: string }>()
+const $q = useQuasar()
+
+const version = computed(() => { return props.versionValue })
 
 const reader = new FileReader()
 
 const img = ref()
 
-const disable = ref(true)
-
 const newsValue = ref<IListNews>({
   id: new Date().toISOString(),
   title: '',
   descript: '',
-  img: ''
+  img: img.value
 })
 
-const convertImage = () => {
-  reader.readAsDataURL(img.value)
-  reader.onload = () => {
-    const imgConvert = reader.result?.toString()
-    newsValue.value.img = imgConvert
+const saveNews = () => {
+  if (newsValue.value.title === '' && newsValue.value.descript === '') {
+    $q.notify({
+      message: 'Preencha os campos obrigatórios',
+      color: 'red-6',
+      icon: 'fa-solid fa-ban'
+    })
+    return
   }
-  reader.onerror = (err) => {
-    console.log(err)
-  }
+  version.value.listNews.push(newsValue.value)
+  reset()
 }
 
-const saveNews = () => {
+const convertImage = (propsRow?: any) => {
   if (img.value) {
-    convertImage()
+    reader.readAsDataURL(img.value)
+    reader.onload = () => {
+      img.value = reader.result?.toString()
+    }
+  } else if (propsRow) {
+    reader.readAsDataURL(propsRow)
+    reader.onload = () => {
+      propsRow = reader.result?.toString()
+    }
   }
-  reset()
 }
 
 const reset = () => {
@@ -138,15 +167,8 @@ const reset = () => {
     descript: '',
     img: ''
   }
-  img.value = null
 }
 
 </script>
-
 <style scoped>
-.size-columns{
-  max-width: 200px;
-  overflow: hidden;
-  text-overflow: ellipsis;
-}
 </style>

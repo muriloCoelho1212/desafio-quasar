@@ -36,15 +36,51 @@
         </q-btn-dropdown>
       </q-td>
     </template>
+    <template v-slot:bottom="props">
+      <div class="row items-center justify-between full-width">
+        <div class="row items-center q-gutter-sm q-pa-md">
+          <span class="text-subtitle1 text-grey-7">
+            Exibindo
+            <strong>
+              {{ props.pagination.page }}
+            </strong> de
+            <strong>
+              {{ props.pagesNumber }}
+            </strong> páginas
+          </span>
+        </div>
+        <div class="row items-center q-gutter-sm">
+          <div class="row items-center">
+            <span class="text-subtitle1 text-grey-7">Registros por página</span>
+            <q-select dense borderless v-model="rowsPage" :options="options" class="text-subtitle1 q-px-md"
+              color="orange-14" />
+          </div>
+          <q-btn flat dense color="orange-14" icon="fa-solid fa-backward-step" class="spacing" @click="props.firstPage"
+            :disable="props.isFirstPage" />
+          <q-btn flat dense color="orange-14" icon="fa-solid fa-chevron-left" class="spacing" @click="props.prevPage"
+            :disable="props.isFirstPage" />
+          <span>{{ props.pagination.page }} / {{ props.pagesNumber }}</span>
+          <q-btn flat dense color="orange-14" icon="fa-solid fa-chevron-right" class="spacing" @click="props.nextPage" :disable="props.isLastPage" />
+          <q-btn flat dense color="orange-14" icon="fa-solid fa-forward-step" class="spacing" @click="props.lastPage" :disable="props.isLastPage" />
+        </div>
+      </div>
+    </template>
   </q-table>
 </template>
 
 <script setup lang="ts">
 import { QTableProps, useQuasar } from 'quasar'
 import { IVersions } from 'src/interfaces'
-import { computed, onMounted } from 'vue'
+import { computed, onMounted, ref } from 'vue'
 import { useRouter } from 'vue-router'
 import { useStore } from 'vuex'
+
+const store = useStore()
+
+const options = [5, 10, 15]
+const rowsPage = ref(5)
+
+const versions = computed<IVersions[]>(() => store.state.versions)
 
 const columns: QTableProps['columns'] = [
   {
@@ -77,10 +113,6 @@ const columns: QTableProps['columns'] = [
     field: 'actions'
   }
 ]
-
-const store = useStore()
-
-const versions = computed<IVersions[]>(() => store.state.versions)
 
 const $q = useQuasar()
 const router = useRouter()
@@ -128,7 +160,7 @@ const deleteRow = async (id: number) => {
   }
 }
 
-const editRow = (id: string) => {
+const editRow = async (id: string) => {
   router.push({ name: 'formVersions', params: { id } })
 }
 

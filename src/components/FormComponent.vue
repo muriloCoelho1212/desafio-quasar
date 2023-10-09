@@ -68,7 +68,7 @@ const router = useRouter()
 const $q = useQuasar()
 const route = useRoute()
 
-const id = route.params.id
+const id = ref('')
 const disable = ref(false)
 
 const listNewsValue = ref<IListNews[]>([])
@@ -83,9 +83,11 @@ const versionValue = ref<IVersions>({
 const version = computed(() => store.state.versions)
 
 onMounted(async () => {
-  if (id) {
+  await router.isReady()
+  id.value = route.params.id.toString()
+  if (id.value) {
     disable.value = true
-    await store.dispatch('getVersion', id)
+    await store.dispatch('getVersion', id.value)
     versionValue.value = version.value
     await store.dispatch('getVersions')
   }
@@ -112,7 +114,7 @@ const editVersion = async () => {
 
 const onSubmit = async () => {
   try {
-    if (id) {
+    if (id.value) {
       editVersion()
       return
     }

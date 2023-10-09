@@ -1,11 +1,10 @@
 import { api } from 'src/boot/axios'
-import { IListNews, IVersions } from 'src/interfaces'
+import { IVersions, IListNews } from 'src/interfaces'
 import { createStore } from 'vuex'
 
 const store = createStore({
   state: {
-    versions: [] as IVersions[],
-    listNews: [] as IListNews[]
+    versions: [] as IVersions[]
   },
   mutations: {
     GET_VERSIONS (state, data) {
@@ -27,9 +26,8 @@ const store = createStore({
   },
   actions: {
     async getVersions ({ commit }) {
-      const { data } = await api.get('versions/1')
-      console.log(data)
-      // commit('GET_VERSION', data)
+      const { data } = await api.get('versions')
+      commit('GET_VERSION', data)
     },
     async getVersion ({ commit }, id) {
       const { data } = await api.get(`versions/${id}`)
