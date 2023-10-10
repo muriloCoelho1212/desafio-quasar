@@ -7,7 +7,7 @@
     <q-separator />
 
     <q-card-section class="q-gutter-sm">
-      <q-form class="row">
+      <q-form class="row" v-show="modeView !== 'view'">
         <q-input
           outlined
           color="orange-12"
@@ -50,30 +50,34 @@
     </q-card-section>
 
     <q-card-section>
-      <q-table :columns="columns" :rows="version.listNews" row-key="title" >
+      <q-table :columns="columns" :rows="version.listNews" row-key="title" :pagination="{rowsPerPage: 0}" hide-pagination>
         <template v-slot:body-cell-title="props">
           <q-td>
-            <q-input v-model="props.row.title" type="text" outlined color="orange-12" label="Título"/>
+            <span v-show="modeView !== 'edit'" >{{ props.row.title }}</span>
+            <q-input v-model="props.row.title" type="text" outlined color="orange-12" label="Título" v-show="modeView === 'edit'" :disable="modeView === 'view'" />
           </q-td>
         </template>
         <template v-slot:body-cell-descript="props">
           <q-td>
-            <q-input v-model="props.row.descript" type="text" outlined color="orange-12" label="Descrição" />
+            <span v-show="modeView !== 'edit'" >{{ props.row.descript }}</span>
+            <q-input v-model="props.row.descript" type="text" outlined color="orange-12" label="Descrição" v-show="modeView === 'edit'" :disable="modeView === 'view'" />
           </q-td>
         </template>
         <template v-slot:body-cell-img="props">
           <q-td>
             <q-img :placeholder-src="props.row.img" />
-            <q-file v-model="props.row.img" @update:model-value="convertImage(props.row.img)" outlined label="Imagem" color="orange-12" clearable class="col-xs-2" clear-icon="fa-solid fa-xmark"  >
+            <q-file v-model="img" @update:model-value="convertImage()" outlined :label="modeView === 'edit' ? 'Mudar imagem' : 'Imagem'"
+              color="orange-12" clearable class="col-xs-2" clear-icon="fa-solid fa-xmark" v-show="modeView === 'edit'"
+              :disable="modeView === 'view'">
               <template v-slot:prepend>
                 <q-icon name="fa-solid fa-upload" />
               </template>
             </q-file>
           </q-td>
         </template>
-        <template v-slot:body-cell-actions>
+        <template v-slot:body-cell-actions="props">
           <q-td class="col">
-            <q-btn flat icon="fa-solid fa-trash" color="red-6" padding=".50rem" />
+            <q-btn flat icon="fa-solid fa-trash" color="red-6" padding=".50rem" v-show="modeView !== 'view'" @click="delRow(props.row.id)" />
           </q-td>
         </template>
       </q-table>
@@ -85,6 +89,9 @@
 import { QTableProps, useQuasar } from 'quasar'
 import { IListNews, IVersions } from 'src/interfaces'
 import { computed, ref } from 'vue'
+import { useStore } from 'vuex'
+
+const store = useStore()
 
 const columns: QTableProps['columns'] = [
   {
@@ -117,7 +124,8 @@ const columns: QTableProps['columns'] = [
   }
 ]
 
-const props = defineProps<{ versionValue: IVersions, id: string }>()
+const props = defineProps<{ versionValue: IVersions, id: string | undefined, modeView: string }>()
+const id = computed(() => { return props.id })
 const $q = useQuasar()
 
 const version = computed(() => { return props.versionValue })
@@ -130,32 +138,33 @@ const newsValue = ref<IListNews>({
   id: new Date().toISOString(),
   title: '',
   descript: '',
-  img: img.value
+  img: ''
 })
 
-const saveNews = () => {
-  if (newsValue.value.title === '' && newsValue.value.descript === '') {
-    $q.notify({
-      message: 'Preencha os campos obrigatórios',
-      color: 'red-6',
-      icon: 'fa-solid fa-ban'
-    })
-    return
-  }
+const saveNews = async () => {
   version.value.listNews.push(newsValue.value)
   reset()
 }
 
-const convertImage = (propsRow?: any) => {
+const delRow = async (idRow: string) => {
+  const infoDel = {
+    idRow,
+    version: version.value
+  }
+  await store.dispatch('delRow', infoDel)
+  window.location.href = `./${id.value}`
+}
+
+const convertImage = async (propsRow?: File) => {
   if (img.value) {
     reader.readAsDataURL(img.value)
     reader.onload = () => {
-      img.value = reader.result?.toString()
+      newsValue.value.img = reader.result?.toString()
     }
   } else if (propsRow) {
     reader.readAsDataURL(propsRow)
     reader.onload = () => {
-      propsRow = reader.result?.toString()
+      newsValue.value.img = reader.result?.toString()
     }
   }
 }

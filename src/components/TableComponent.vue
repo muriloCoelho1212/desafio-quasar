@@ -3,6 +3,7 @@
     :rows="versions"
     :columns="columns"
     row-key="id"
+    v-model:pagination="pag"
   >
     <template v-slot:body-cell-actions="props">
       <q-td :props="props">
@@ -52,7 +53,8 @@
         <div class="row items-center q-gutter-sm">
           <div class="row items-center">
             <span class="text-subtitle1 text-grey-7">Registros por página</span>
-            <q-select dense borderless v-model="rowsPage" :options="options" class="text-subtitle1 q-px-md"
+            <q-select dense borderless v-model="rowsPage" @update:model-value="
+            pag.rowsPerPage = rowsPage" :options="[5, 10, 15]" class="text-subtitle1 q-px-md"
               color="orange-14" />
           </div>
           <q-btn flat dense color="orange-14" icon="fa-solid fa-backward-step" class="spacing" @click="props.firstPage"
@@ -77,8 +79,13 @@ import { useStore } from 'vuex'
 
 const store = useStore()
 
-const options = [5, 10, 15]
 const rowsPage = ref(5)
+
+const pag = ref({
+  descending: false,
+  page: 1,
+  rowsPerPage: 5
+})
 
 const versions = computed<IVersions[]>(() => store.state.versions)
 
@@ -161,10 +168,12 @@ const deleteRow = async (id: number) => {
 }
 
 const editRow = async (id: string) => {
+  store.commit('EDIT_STATE')
   router.push({ name: 'formVersions', params: { id } })
 }
 
 const viewRow = async (id: string) => {
+  store.commit('VIEW_STATE')
   router.push({ name: 'formVersions', params: { id } })
 }
 </script>

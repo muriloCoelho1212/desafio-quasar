@@ -4,7 +4,8 @@ import { createStore } from 'vuex'
 
 const store = createStore({
   state: {
-    versions: [] as IVersions[]
+    versions: [] as IVersions[],
+    modeView: ''
   },
   mutations: {
     GET_VERSIONS (state, data) {
@@ -22,6 +23,19 @@ const store = createStore({
     },
     DELETE_VERSION (state, id) {
       state.versions = state.versions.filter(v => v.id !== id)
+    },
+    DEL_ROW (state, newVersion) {
+      const index = state.versions.findIndex(v => v.id === newVersion.id)
+      state.versions[index] = newVersion
+    },
+    EDIT_STATE (state) {
+      state.modeView = 'edit'
+    },
+    VIEW_STATE (state) {
+      state.modeView = 'view'
+    },
+    POST_STATE (state) {
+      state.modeView = 'post'
     }
   },
   actions: {
@@ -45,6 +59,15 @@ const store = createStore({
     async delVersion ({ commit }, id) {
       await api.delete(`versions/${id}`)
       commit('DELETE_VERSION', id)
+    },
+    async delRow ({ commit }, { idRow, version }) {
+      const { data } = await api.get<IVersions>(`versions/${version.id}`)
+      let listNews = data.listNews
+      listNews = listNews.filter((lNew: IListNews) => lNew.id !== idRow)
+      data.listNews = listNews
+      console.log(data)
+      await api.put(`versions/${version.id}`, data)
+      commit('DEL_ROW', data)
     }
   }
 })

@@ -19,9 +19,10 @@
           lazy-rules
           :rules="[ val => val && val.length > 0 || 'Campo obrigatório', val => val.length <= 4 || 'Insira no máximo 4 caracteres']"
           class="q-pr-md col"
+          :disable="modeView === 'view'"
         />
 
-        <q-input class="q-pr-md col" clearable readonly clear-icon="fa-solid fa-xmark" mask="##/##/####" color="orange-12" outlined type="text" placeholder="dd/mm/aaaa" v-model="versionValue.dateVersion" label="Data de disponibilidade *" :rules="[val => val && val.length > 0 || 'Campo obrigatório']">
+        <q-input class="q-pr-md col" clearable readonly :disable="modeView === 'view'" clear-icon="fa-solid fa-xmark" mask="##/##/####" color="orange-12" outlined type="text" placeholder="dd/mm/aaaa" v-model="versionValue.dateVersion" label="Data de disponibilidade *" :rules="[val => val && val.length > 0 || 'Campo obrigatório']">
           <template v-slot:prepend>
             <q-btn-dropdown flat dense dropdown-icon="fa-solid fa-calendar-days" padding="none" no-icon-animation>
               <q-date
@@ -43,7 +44,7 @@
       </div>
 
       <div>
-        <form-news-component :version-value="versionValue" :id="id" />
+        <form-news-component :version-value="versionValue" :id="id" :modeView="modeView" />
       </div>
 
       <div class="q-mt-md">
@@ -60,6 +61,9 @@ import { computed, onMounted, ref } from 'vue'
 import { useRoute, useRouter } from 'vue-router'
 import FormNewsComponent from './FormNewsComponent.vue'
 import { useStore } from 'vuex'
+
+const props = defineProps<{ modeView: string }>()
+const modeView = computed(() => { return props.modeView })
 
 const store = useStore()
 
@@ -84,7 +88,7 @@ const version = computed(() => store.state.versions)
 
 onMounted(async () => {
   await router.isReady()
-  id.value = route.params.id.toString()
+  id.value = route.params.id?.toString()
   if (id.value) {
     disable.value = true
     await store.dispatch('getVersion', id.value)
