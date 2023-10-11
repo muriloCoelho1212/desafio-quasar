@@ -10,7 +10,7 @@
         @click="drawer = !drawer"
       />
       <q-toolbar-title class="text-h2 text-center text-weight-regular q-pa-md q-ml-md">
-        Quasar Project
+        Versões do sistema
       </q-toolbar-title>
     </q-toolbar>
   </q-header>

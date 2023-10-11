@@ -95,14 +95,16 @@ const columns: QTableProps['columns'] = [
     required: true,
     label: 'Número da versão',
     align: 'left',
-    field: 'numberVersion'
+    field: 'numberVersion',
+    sortable: true
   },
   {
     name: 'dateVersion',
     required: true,
     label: 'Data da versão',
     align: 'left',
-    field: 'dateVersion'
+    field: 'dateVersion',
+    sortable: true
   },
   {
     name: 'listNews',

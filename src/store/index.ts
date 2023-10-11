@@ -1,6 +1,7 @@
 import { api } from 'src/boot/axios'
 import { IVersions, IListNews } from 'src/interfaces'
 import { createStore } from 'vuex'
+import { ADD_VERSION, DELETE_VERSION, DEL_ROW, EDIT_VERSION, GET_VERSION, GET_VERSIONS } from './mutations/mutations'
 
 const store = createStore({
   state: {
@@ -42,24 +43,24 @@ const store = createStore({
   actions: {
     async getVersions ({ commit }) {
       const { data } = await api.get('versions')
-      commit('GET_VERSION', data)
+      commit(GET_VERSIONS, data)
     },
     async getVersion ({ commit }, id) {
       const { data } = await api.get(`versions/${id}`)
-      commit('GET_VERSION', data)
+      commit(GET_VERSION, data)
     },
     async postVersion ({ commit }, payload) {
       await api.post('versions', payload)
-      commit('ADD_VERSION', payload)
+      commit(ADD_VERSION, payload)
     },
     async putVersion ({ commit }, newVersion) {
       const id = newVersion.id
       await api.put(`versions/${id}`, newVersion)
-      commit('EDIT_VERSION', newVersion)
+      commit(EDIT_VERSION, newVersion)
     },
     async delVersion ({ commit }, id) {
       await api.delete(`versions/${id}`)
-      commit('DELETE_VERSION', id)
+      commit(DELETE_VERSION, id)
     },
     async delRow ({ commit }, { idRow, version }) {
       const { data } = await api.get<IVersions>(`versions/${version.id}`)
@@ -68,7 +69,7 @@ const store = createStore({
       data.listNews = listNews
       console.log(data)
       await api.put(`versions/${version.id}`, data)
-      commit('DEL_ROW', data)
+      commit(DEL_ROW, data)
     }
   }
 })

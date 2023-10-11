@@ -19,7 +19,7 @@
           label="Título"
           lazy-rules
           :rules="[
-            val => val !== null && val !== '' || 'Campo obrigatório',
+            val => val !== null && val !== '' || 'Campo obrigatório', val => val.length < 120 || 'O limite de caracteres foi atingido'
           ]"
           class="q-pr-md q-mb-sm col-xs-12"
         />
@@ -75,10 +75,11 @@
         row-key="title"
         :pagination="{rowsPerPage: 0}"
         hide-pagination
+        separator="vertical"
       >
         <template v-slot:body-cell-title="props">
           <q-td>
-            <span v-show="modeView !== 'edit'" >{{ props.row.title }}</span>
+            <span v-show="modeView !== 'edit'" class="text-subtitle1" >{{ props.row.title }}</span>
             <q-input
               v-model="props.row.title"
               type="text"
@@ -92,7 +93,7 @@
         </template>
         <template v-slot:body-cell-descript="props">
           <q-td>
-            <span v-show="modeView !== 'edit'" >{{ props.row.descript }}</span>
+            <span v-show="modeView !== 'edit'">{{ props.row.descript }}</span>
             <q-input
               v-model="props.row.descript"
               type="text"
@@ -106,7 +107,8 @@
         </template>
         <template v-slot:body-cell-img="props">
           <q-td>
-            <q-img :placeholder-src="props.row.img" />
+            <q-img v-if="props.row.img" :placeholder-src="props.row.img" width="250px"/>
+            <span v-else class="text-subtitle1">Nenhuma imagem cadastrada</span>
             <q-file
               v-model="img"
               @update:model-value="convertImage(props.row.id)"
@@ -128,7 +130,7 @@
               color="red-6"
               padding=".50rem"
               v-show="modeView !== 'view'"
-              @click="delRow(props.row.id)" />
+              @click="deleteRow(props.row.id)" />
           </q-td>
         </template>
       </q-table>
@@ -141,6 +143,7 @@ import { QTableProps } from 'quasar'
 import { IListNews, IVersions } from 'src/interfaces'
 import { computed, ref } from 'vue'
 import { useStore } from 'vuex'
+import { delRow } from '../store/actions/actions'
 
 const store = useStore()
 
@@ -196,12 +199,12 @@ const saveNews = async () => {
   reset()
 }
 
-const delRow = async (idRow: string) => {
+const deleteRow = async (idRow: string) => {
   const infoDel = {
     idRow,
     version: version.value
   }
-  await store.dispatch('delRow', infoDel)
+  await store.dispatch(delRow, infoDel)
   window.location.href = `./${id.value}`
 }
 

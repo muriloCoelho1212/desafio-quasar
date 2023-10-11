@@ -2,7 +2,7 @@
   "name": "quasar-challenge",
   "version": "0.0.1",
   "description": "A Quasar Project",
-  "productName": "Quasar App",
+  "productName": "Versões do sistema",
   "author": "Murilo <m.coelhos1212@gmail.com>",
   "private": true,
   "scripts": {

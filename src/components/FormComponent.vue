@@ -26,7 +26,6 @@
         <q-input
           class="q-pr-md col"
           clearable
-          readonly
           :disable="modeView === 'view'"
           clear-icon="fa-solid fa-xmark"
           mask="##/##/####"
@@ -90,6 +89,7 @@ import { computed, onMounted, ref } from 'vue'
 import { useRoute, useRouter } from 'vue-router'
 import FormNewsComponent from './FormNewsComponent.vue'
 import { useStore } from 'vuex'
+import { getVersion, getVersions, postVersion, putVersion } from '../store/actions/actions'
 
 const props = defineProps<{ modeView: string }>()
 const modeView = computed(() => { return props.modeView })
@@ -118,16 +118,16 @@ onMounted(async () => {
   id.value = route.params.id?.toString()
   if (id.value) {
     disable.value = true
-    await store.dispatch('getVersion', id.value)
+    await store.dispatch(getVersion, id.value)
     versionValue.value = version.value
-    await store.dispatch('getVersions')
+    await store.dispatch(getVersions)
   }
 })
 
 const editVersion = async () => {
   try {
-    await store.dispatch('putVersion', versionValue.value)
-    await store.dispatch('getVersions')
+    await store.dispatch(putVersion, versionValue.value)
+    await store.dispatch(getVersions)
     $q.notify({
       message: 'Editado com sucesso',
       icon: 'fa-solid fa-thumbs-up',
@@ -149,7 +149,7 @@ const onSubmit = async () => {
       editVersion()
       return
     }
-    await store.dispatch('postVersion', versionValue.value)
+    await store.dispatch(postVersion, versionValue.value)
     $q.notify({
       message: 'Versão cadastrada com sucesso',
       icon: 'fa-solid fa-thumbs-up',
