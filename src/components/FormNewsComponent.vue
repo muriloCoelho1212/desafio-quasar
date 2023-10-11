@@ -113,7 +113,7 @@
               v-model="img"
               @update:model-value="convertImage(props.row.id)"
               outlined
-              color="orange-12" clearable class="col-xs-2" clear-icon="fa-solid fa-xmark" v-show="modeView === 'edit'"
+              color="orange-12" clearable class="col-xs-2 q-my-sm" clear-icon="fa-solid fa-xmark" v-show="modeView === 'edit'"
               :label="modeView === 'edit' ? 'Mudar imagem' : 'Imagem'"
               :disable="modeView === 'view'">
               <template v-slot:prepend>
@@ -172,7 +172,7 @@ const columns: QTableProps['columns'] = [
   {
     name: 'actions',
     required: true,
-    align: 'right',
+    align: 'center',
     label: '',
     field: 'actions'
   }
