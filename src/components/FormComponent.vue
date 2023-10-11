@@ -16,15 +16,36 @@
           placeholder="Ex: 1.00"
           v-model="versionValue.numberVersion"
           color="orange-12"
+          mask="#.#"
           lazy-rules
           :rules="[ val => val && val.length > 0 || 'Campo obrigatório', val => val.length <= 4 || 'Insira no máximo 4 caracteres']"
           class="q-pr-md col"
           :disable="modeView === 'view'"
         />
 
-        <q-input class="q-pr-md col" clearable readonly :disable="modeView === 'view'" clear-icon="fa-solid fa-xmark" mask="##/##/####" color="orange-12" outlined type="text" placeholder="dd/mm/aaaa" v-model="versionValue.dateVersion" label="Data de disponibilidade *" :rules="[val => val && val.length > 0 || 'Campo obrigatório']">
+        <q-input
+          class="q-pr-md col"
+          clearable
+          readonly
+          :disable="modeView === 'view'"
+          clear-icon="fa-solid fa-xmark"
+          mask="##/##/####"
+          color="orange-12"
+          outlined
+          type="text"
+          placeholder="dd/mm/aaaa"
+          v-model="versionValue.dateVersion"
+          label="Data de disponibilidade *"
+          :rules="[val => val && val.length > 0 || 'Campo obrigatório']"
+        >
           <template v-slot:prepend>
-            <q-btn-dropdown flat dense dropdown-icon="fa-solid fa-calendar-days" padding="none" no-icon-animation>
+            <q-btn-dropdown
+              flat
+              dense
+              dropdown-icon="fa-solid fa-calendar-days"
+              padding="none"
+              no-icon-animation
+            >
               <q-date
                 v-model="versionValue.dateVersion"
                 color="deep-orange-12"
@@ -44,11 +65,19 @@
       </div>
 
       <div>
-        <form-news-component :version-value="versionValue" :id="id" :modeView="modeView" />
+        <form-news-component
+          :version-value="versionValue"
+          :id="id"
+          :modeView="modeView"
+        />
       </div>
 
       <div class="q-mt-md">
-        <q-btn label="Salvar" type="submit" color="deep-orange-5" />
+        <q-btn
+          label="Salvar"
+          type="submit"
+          color="deep-orange-5"
+        />
       </div>
     </div>
   </q-form>
@@ -56,7 +85,7 @@
 
 <script setup lang="ts">
 import { useQuasar } from 'quasar'
-import { IListNews, IVersions } from 'src/interfaces'
+import { IVersions } from 'src/interfaces'
 import { computed, onMounted, ref } from 'vue'
 import { useRoute, useRouter } from 'vue-router'
 import FormNewsComponent from './FormNewsComponent.vue'
@@ -75,13 +104,11 @@ const route = useRoute()
 const id = ref('')
 const disable = ref(false)
 
-const listNewsValue = ref<IListNews[]>([])
-
 const versionValue = ref<IVersions>({
   id: 0,
   numberVersion: '',
   dateVersion: '',
-  listNews: listNewsValue.value
+  listNews: []
 })
 
 const version = computed(() => store.state.versions)

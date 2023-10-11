@@ -30,19 +30,6 @@
       <q-item
         clickable
         v-ripple
-        :to="{ name: 'listNews' }"
-        active-class="my-menu-link"
-      >
-        <q-item-section avatar>
-          <q-icon name="fa-solid fa-newspaper" />
-        </q-item-section>
-
-        <q-item-section class="text-weight-bold q-py-md">Novidades</q-item-section>
-      </q-item>
-
-      <q-item
-        clickable
-        v-ripple
         href="https://github.com/murilocoelho1212"
         target="_blank"
         active-class="my-menu-link"

@@ -1,7 +1,14 @@
 <template>
   <q-header>
     <q-toolbar class="bg-grey-9">
-      <q-btn flat round dense icon="menu" class="text-h4" @click="drawer = !drawer" />
+      <q-btn
+        flat
+        round
+        dense
+        icon="menu"
+        class="text-h4"
+        @click="drawer = !drawer"
+      />
       <q-toolbar-title class="text-h2 text-center text-weight-regular q-pa-md q-ml-md">
         Quasar Project
       </q-toolbar-title>

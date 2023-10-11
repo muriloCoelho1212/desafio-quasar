@@ -14,9 +14,6 @@ const routes: RouteRecordRaw[] = [
       },
       {
         path: 'form/:id?', name: 'formVersions', component: () => import('pages/FormPage.vue')
-      },
-      {
-        path: 'list-news', name: 'listNews', component: () => import('pages/ListNewsPage.vue')
       }
     ]
   },

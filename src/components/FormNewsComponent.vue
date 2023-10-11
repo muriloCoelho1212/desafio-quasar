@@ -7,7 +7,10 @@
     <q-separator />
 
     <q-card-section class="q-gutter-sm">
-      <q-form class="row" v-show="modeView !== 'view'">
+      <q-form
+        class="row"
+        v-show="modeView !== 'view'"
+      >
         <q-input
           outlined
           color="orange-12"
@@ -35,14 +38,30 @@
           class="q-pr-md col"
         />
 
-        <q-file v-model="img" @update:model-value="convertImage()" outlined label="Imagem" color="orange-12" clearable class="col-xs-2" clear-icon="fa-solid fa-xmark">
+        <q-file
+          v-model="img"
+          @update:model-value="convertImage()"
+          outlined
+          label="Imagem"
+          color="orange-12"
+          clearable
+          class="col-xs-2"
+          clear-icon="fa-solid fa-xmark"
+        >
           <template v-slot:prepend>
             <q-icon name="fa-solid fa-upload" />
           </template>
         </q-file>
 
         <div>
-          <q-btn class="q-pa-md q-mx-md" outline dense icon="fa-solid fa-check-to-slot" color="deep-orange-12" @click="saveNews()">
+          <q-btn
+            class="q-pa-md q-mx-md"
+            outline
+            dense
+            icon="fa-solid fa-check-to-slot"
+            color="deep-orange-12"
+            @click="saveNews()"
+          >
             <q-tooltip class="text-caption">Adicionar novidade</q-tooltip>
           </q-btn>
         </div>
@@ -50,24 +69,50 @@
     </q-card-section>
 
     <q-card-section>
-      <q-table :columns="columns" :rows="version.listNews" row-key="title" :pagination="{rowsPerPage: 0}" hide-pagination>
+      <q-table
+        :columns="columns"
+        :rows="version.listNews"
+        row-key="title"
+        :pagination="{rowsPerPage: 0}"
+        hide-pagination
+      >
         <template v-slot:body-cell-title="props">
           <q-td>
             <span v-show="modeView !== 'edit'" >{{ props.row.title }}</span>
-            <q-input v-model="props.row.title" type="text" outlined color="orange-12" label="Título" v-show="modeView === 'edit'" :disable="modeView === 'view'" />
+            <q-input
+              v-model="props.row.title"
+              type="text"
+              outlined
+              color="orange-12"
+              label="Título"
+              v-show="modeView === 'edit'"
+              :disable="modeView === 'view'"
+            />
           </q-td>
         </template>
         <template v-slot:body-cell-descript="props">
           <q-td>
             <span v-show="modeView !== 'edit'" >{{ props.row.descript }}</span>
-            <q-input v-model="props.row.descript" type="text" outlined color="orange-12" label="Descrição" v-show="modeView === 'edit'" :disable="modeView === 'view'" />
+            <q-input
+              v-model="props.row.descript"
+              type="text"
+              outlined
+              color="orange-12"
+              label="Descrição"
+              v-show="modeView === 'edit'"
+              :disable="modeView === 'view'"
+            />
           </q-td>
         </template>
         <template v-slot:body-cell-img="props">
           <q-td>
             <q-img :placeholder-src="props.row.img" />
-            <q-file v-model="img" @update:model-value="convertImage()" outlined :label="modeView === 'edit' ? 'Mudar imagem' : 'Imagem'"
+            <q-file
+              v-model="img"
+              @update:model-value="convertImage(props.row.id)"
+              outlined
               color="orange-12" clearable class="col-xs-2" clear-icon="fa-solid fa-xmark" v-show="modeView === 'edit'"
+              :label="modeView === 'edit' ? 'Mudar imagem' : 'Imagem'"
               :disable="modeView === 'view'">
               <template v-slot:prepend>
                 <q-icon name="fa-solid fa-upload" />
@@ -77,7 +122,13 @@
         </template>
         <template v-slot:body-cell-actions="props">
           <q-td class="col">
-            <q-btn flat icon="fa-solid fa-trash" color="red-6" padding=".50rem" v-show="modeView !== 'view'" @click="delRow(props.row.id)" />
+            <q-btn
+              flat
+              icon="fa-solid fa-trash"
+              color="red-6"
+              padding=".50rem"
+              v-show="modeView !== 'view'"
+              @click="delRow(props.row.id)" />
           </q-td>
         </template>
       </q-table>
@@ -86,7 +137,7 @@
 </template>
 
 <script setup lang="ts">
-import { QTableProps, useQuasar } from 'quasar'
+import { QTableProps } from 'quasar'
 import { IListNews, IVersions } from 'src/interfaces'
 import { computed, ref } from 'vue'
 import { useStore } from 'vuex'
@@ -126,7 +177,6 @@ const columns: QTableProps['columns'] = [
 
 const props = defineProps<{ versionValue: IVersions, id: string | undefined, modeView: string }>()
 const id = computed(() => { return props.id })
-const $q = useQuasar()
 
 const version = computed(() => { return props.versionValue })
 
@@ -155,16 +205,18 @@ const delRow = async (idRow: string) => {
   window.location.href = `./${id.value}`
 }
 
-const convertImage = async (propsRow?: File) => {
+const convertImage = async (idRow?: string) => {
   if (img.value) {
     reader.readAsDataURL(img.value)
     reader.onload = () => {
-      newsValue.value.img = reader.result?.toString()
-    }
-  } else if (propsRow) {
-    reader.readAsDataURL(propsRow)
-    reader.onload = () => {
-      newsValue.value.img = reader.result?.toString()
+      if (version.value.listNews.find(lNew => lNew.id === idRow)) {
+        const news = version.value.listNews.find(lNew => lNew.id === idRow)
+        if (news) {
+          news.img = reader.result?.toString()
+        }
+      } else {
+        newsValue.value.img = reader.result?.toString()
+      }
     }
   }
 }

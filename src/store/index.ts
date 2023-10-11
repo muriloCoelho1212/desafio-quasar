@@ -19,6 +19,7 @@ const store = createStore({
     },
     EDIT_VERSION (state, newVersion) {
       const index = state.versions.findIndex(v => v.id === newVersion.id)
+      console.log(index)
       state.versions[index] = newVersion
     },
     DELETE_VERSION (state, id) {
