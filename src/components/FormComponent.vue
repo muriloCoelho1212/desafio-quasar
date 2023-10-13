@@ -13,12 +13,14 @@
           outlined
           type="text"
           label="Número da versão *"
-          placeholder="Ex: 1.00"
+          placeholder="Ex: 1.0.0"
+          clearable
+          clear-icon="fa-solid fa-xmark"
           v-model="versionValue.numberVersion"
           color="orange-12"
-          mask="#.#"
+          ref="fieldRef"
           lazy-rules
-          :rules="[ val => val && val.length > 0 || 'Campo obrigatório', val => val.length <= 4 || 'Insira no máximo 4 caracteres']"
+          :rules="[val => rgxVersion.test(val) || 'Formato inválido']"
           class="q-pr-md col"
           :disable="modeView === 'view'"
         />
@@ -30,12 +32,13 @@
           clear-icon="fa-solid fa-xmark"
           mask="##/##/####"
           color="orange-12"
+          ref="fieldRef"
           outlined
           type="text"
           placeholder="dd/mm/aaaa"
           v-model="versionValue.dateVersion"
           label="Data de disponibilidade *"
-          :rules="[val => val && val.length > 0 || 'Campo obrigatório']"
+          :rules="[val => moment(val, 'DD/MM/YYYY').isValid() || 'Formato inválido']"
         >
           <template v-slot:prepend>
             <q-btn-dropdown
@@ -90,9 +93,12 @@ import { useRoute, useRouter } from 'vue-router'
 import FormNewsComponent from './FormNewsComponent.vue'
 import { useStore } from 'vuex'
 import { getVersion, getVersions, postVersion, putVersion } from '../store/actions/actions'
+import moment from 'moment'
 
 const props = defineProps<{ modeView: string }>()
 const modeView = computed(() => { return props.modeView })
+
+const rgxVersion = /^(0|[1-9]\d*)\.(0|[1-9]\d*)\.(0|[1-9]\d*)(?:-((?:0|[1-9]\d*|\d*[a-zA-Z-][0-9a-zA-Z-])(?:\.(?:0|[1-9]\d|\d*[a-zA-Z-][0-9a-zA-Z-]*))*))?(?:\+([0-9a-zA-Z-]+(?:\.[0-9a-zA-Z-]+)*))?$/gm
 
 const store = useStore()
 

@@ -73,6 +73,8 @@
 <script setup lang="ts">
 import { QTableProps, useQuasar } from 'quasar'
 import { IVersions } from 'src/interfaces'
+import { delVersion, getVersions } from 'src/store/actions/actions'
+import { EDIT_STATE, VIEW_STATE } from 'src/store/mutations/mutations'
 import { computed, onMounted, ref } from 'vue'
 import { useRouter } from 'vue-router'
 import { useStore } from 'vuex'
@@ -132,7 +134,7 @@ onMounted(async () => {
 
 const getData = async () => {
   try {
-    await store.dispatch('getVersions')
+    await store.dispatch(getVersions)
   } catch {
     $q.notify({
       message: 'Erro ao carregar a tabela',
@@ -152,7 +154,7 @@ const deleteRow = async (id: number) => {
       color: 'orange-12',
       focus: 'none'
     }).onOk(async () => {
-      await store.dispatch('delVersion', id)
+      await store.dispatch(delVersion, id)
       $q.notify({
         message: 'Excluído com sucesso',
         icon: 'fa-solid fa-thumbs-up',
@@ -170,12 +172,12 @@ const deleteRow = async (id: number) => {
 }
 
 const editRow = async (id: string) => {
-  store.commit('EDIT_STATE')
+  store.commit(EDIT_STATE)
   router.push({ name: 'formVersions', params: { id } })
 }
 
 const viewRow = async (id: string) => {
-  store.commit('VIEW_STATE')
+  store.commit(VIEW_STATE)
   router.push({ name: 'formVersions', params: { id } })
 }
 </script>
