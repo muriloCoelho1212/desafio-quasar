@@ -1,6 +1,7 @@
 import { api } from 'src/boot/axios'
 import { IVersions, IListNews } from 'src/interfaces'
 import { createStore } from 'vuex'
+import { createPinia, defineStore } from 'pinia'
 import { ADD_VERSION, DELETE_VERSION, DEL_ROW, EDIT_VERSION, GET_VERSION, GET_VERSIONS } from './mutations/mutations'
 
 const store = createStore({

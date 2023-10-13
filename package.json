@@ -15,6 +15,7 @@
     "@quasar/extras": "^1.16.4",
     "axios": "^1.2.1",
     "moment": "^2.29.4",
+    "pinia": "^2.1.7",
     "quasar": "^2.6.0",
     "vue": "^3.0.0",
     "vue-router": "^4.0.0",
@@ -36,8 +37,12 @@
     "typescript": "^4.5.4"
   },
   "babel": {
-    "presets": ["@babel/preset-env"],
-    "plugins": ["@babel/plugin-syntax-optional-chaining-assign"]
+    "presets": [
+      "@babel/preset-env"
+    ],
+    "plugins": [
+      "@babel/plugin-syntax-optional-chaining-assign"
+    ]
   },
   "engines": {
     "node": "^18 || ^16 || ^14.19",

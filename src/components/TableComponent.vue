@@ -4,7 +4,26 @@
     :columns="columns"
     row-key="id"
     v-model:pagination="pag"
+    :filter="filter"
+    class="q-pa-md"
   >
+    <template v-slot:top-left>
+      <span class="text-subtitle1 text-weight-bold q-pb-md text-grey-9">Versões</span>
+    </template>
+    <template v-slot:top-right>
+      <q-input v-model="filter" borderless dense outlined placeholder="Buscar" class="q-pb-md" bg-color="grey-3" color="orange-12">
+        <template v-slot:prepend>
+          <q-icon name="fa-solid fa-search" class="q-pr-md" />
+        </template>
+      </q-input>
+    </template>
+    <template v-slot:header-cell="props">
+      <q-th :props="props">
+        <div class="bg-blue-grey-3 rounded-borders">
+          <span class="text-subtitle2 text-weight-bold">{{ props.col.label }}</span>
+        </div>
+      </q-th>
+    </template>
     <template v-slot:body-cell-actions="props">
       <q-td :props="props">
         <q-btn-dropdown flat color="grey-6" dropdown-icon="fa-solid fa-ellipsis-vertical" no-icon-animation padding=".50rem">
@@ -39,8 +58,8 @@
     </template>
     <template v-slot:bottom="props">
       <div class="row items-center justify-between full-width">
-        <div class="row items-center q-gutter-sm q-pa-md">
-          <span class="text-subtitle1 text-grey-7">
+        <div class="row items-center">
+          <span class="text-subtitle1 text-grey-7 q-py-md">
             Exibindo
             <strong>
               {{ props.pagination.page }}
@@ -91,7 +110,7 @@ const pag = ref({
 
 const versions = computed<IVersions[]>(() => store.state.versions)
 
-const columns: QTableProps['columns'] = [
+const columns = ref<QTableProps['columns']>([
   {
     name: 'numberVersion',
     required: true,
@@ -103,7 +122,7 @@ const columns: QTableProps['columns'] = [
   {
     name: 'dateVersion',
     required: true,
-    label: 'Data da versão',
+    label: 'Data de disponibilidade',
     align: 'left',
     field: 'dateVersion',
     sortable: true
@@ -111,7 +130,7 @@ const columns: QTableProps['columns'] = [
   {
     name: 'listNews',
     required: true,
-    label: 'Data da versão',
+    label: 'Novidades registradas',
     align: 'left',
     field: 'listNews',
     format: val => val.length > 1 ? `${val.length} novidades cadastradas` : `${val.length} novidade cadastrada`
@@ -123,10 +142,12 @@ const columns: QTableProps['columns'] = [
     align: 'right',
     field: 'actions'
   }
-]
+])
 
 const $q = useQuasar()
 const router = useRouter()
+
+const filter = ref('')
 
 onMounted(async () => {
   await getData()

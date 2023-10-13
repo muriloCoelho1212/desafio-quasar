@@ -18,7 +18,6 @@
           clear-icon="fa-solid fa-xmark"
           v-model="versionValue.numberVersion"
           color="orange-12"
-          ref="fieldRef"
           lazy-rules
           :rules="[val => rgxVersion.test(val) || 'Formato inválido']"
           class="q-pr-md col"
@@ -98,7 +97,7 @@ import moment from 'moment'
 const props = defineProps<{ modeView: string }>()
 const modeView = computed(() => { return props.modeView })
 
-const rgxVersion = /^(0|[1-9]\d*)\.(0|[1-9]\d*)\.(0|[1-9]\d*)(?:-((?:0|[1-9]\d*|\d*[a-zA-Z-][0-9a-zA-Z-])(?:\.(?:0|[1-9]\d|\d*[a-zA-Z-][0-9a-zA-Z-]*))*))?(?:\+([0-9a-zA-Z-]+(?:\.[0-9a-zA-Z-]+)*))?$/gm
+const rgxVersion = /^(0|[1-9]\d*)\.(0|[1-9]\d*)\.(0|[1-9]\d*)(?:-((?:0|[1-9]\d*|\d*[a-zA-Z-][0-9a-zA-Z-]*)(?:\.(?:0|[1-9]\d*|\d*[a-zA-Z-][0-9a-zA-Z-]*))*))?(?:\+([0-9a-zA-Z-]+(?:\.[0-9a-zA-Z-]+)*))?$/gm
 
 const store = useStore()
 
