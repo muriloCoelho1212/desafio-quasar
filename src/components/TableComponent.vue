@@ -18,10 +18,8 @@
       </q-input>
     </template>
     <template v-slot:header-cell="props">
-      <q-th :props="props">
-        <div class="bg-blue-grey-3 rounded-borders">
-          <span class="text-subtitle2 text-weight-bold">{{ props.col.label }}</span>
-        </div>
+      <q-th :props="props" class="bg-blue-grey-3">
+        <span class="text-subtitle2 text-weight-bold">{{ props.col.label }}</span>
       </q-th>
     </template>
     <template v-slot:body-cell-actions="props">
@@ -66,7 +64,7 @@
             </strong> de
             <strong>
               {{ props.pagesNumber }}
-            </strong> páginas
+            </strong> {{ props.pagesNumber === 1 ? 'página' : 'páginas' }}
           </span>
         </div>
         <div class="row items-center q-gutter-sm">

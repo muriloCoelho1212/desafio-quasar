@@ -78,6 +78,7 @@
           label="Salvar"
           type="submit"
           color="deep-orange-5"
+          v-show="modeView !== 'view'"
         />
       </div>
     </div>
